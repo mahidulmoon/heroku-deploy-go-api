@@ -2,7 +2,6 @@ package portfolio
 
 import (
 	"fmt"
-	"portfolio/models"
 	"testing"
 
 	"portfolio/db"
@@ -12,7 +11,8 @@ import (
 
 func TestSetUpSchema(t *testing.T) {
 	models := []interface{}{
-		(*models.Skills)(nil),
+		// (*models.Skills)(nil),
+		// (*models.Services)(nil),
 	}
 	for _, model := range models {
 		err := db.DB.Model(model).CreateTable(&orm.CreateTableOptions{})

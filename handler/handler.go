@@ -43,12 +43,52 @@ func GETAllSkills() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		skillsData, err := models.GetAllSkills()
 		if err != nil {
-			c.JSON(200, gin.H{
+			c.JSON(500, gin.H{
 				"results": "not found",
 			})
 		} else {
-			c.JSON(500, gin.H{
+			c.JSON(200, gin.H{
 				"results": skillsData,
+			})
+		}
+	}
+}
+
+func AddServices() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var service models.Services
+
+		err := c.ShouldBindJSON(&service)
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"error to bind": err,
+			})
+		} else {
+			err := service.Add()
+			if err != nil {
+				c.JSON(500, gin.H{
+					"error to bind": err,
+				})
+			} else {
+				c.JSON(201, gin.H{
+					"success": "service added successfully",
+				})
+			}
+		}
+	}
+}
+
+func GETAllService() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		serviceData, err := models.GetServices()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"results": "not found",
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"results": serviceData,
 			})
 		}
 	}

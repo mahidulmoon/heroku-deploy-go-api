@@ -12,6 +12,8 @@ func main() {
 	// r.GET("/ping", handler.TestApi())
 	r.POST("/addskills", handler.AddSkills())
 	r.GET("/getskills", handler.GETAllSkills())
+	r.POST("/addservice", handler.AddServices())
+	r.GET("/getservices", handler.GETAllService())
 	r.Run()
 }
 
