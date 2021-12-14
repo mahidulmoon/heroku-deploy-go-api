@@ -8,6 +8,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.GET("/ping", handler.TestApi())
+	// r.GET("/ping", handler.TestApi())
+	r.POST("/addskills", handler.AddSkills())
 	r.Run()
 }
