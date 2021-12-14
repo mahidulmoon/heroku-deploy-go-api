@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"net/http"
 	"portfolio/models"
 
 	"github.com/gin-gonic/gin"
@@ -22,17 +21,17 @@ func AddSkills() gin.HandlerFunc {
 		err := c.ShouldBindJSON(&skill)
 
 		if err != nil {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
+			c.JSON(400, gin.H{
 				"error to bind": err,
 			})
 		} else {
 			err := skill.Add()
 			if err != nil {
-				c.JSON(http.StatusUnprocessableEntity, gin.H{
+				c.JSON(500, gin.H{
 					"error to bind": err,
 				})
 			} else {
-				c.JSON(http.StatusCreated, gin.H{
+				c.JSON(201, gin.H{
 					"success": "skills added successfully",
 				})
 			}
@@ -44,11 +43,11 @@ func GETAllSkills() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		skillsData, err := models.GetAllSkills()
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
+			c.JSON(200, gin.H{
 				"results": "not found",
 			})
 		} else {
-			c.JSON(http.StatusNotFound, gin.H{
+			c.JSON(500, gin.H{
 				"results": skillsData,
 			})
 		}
