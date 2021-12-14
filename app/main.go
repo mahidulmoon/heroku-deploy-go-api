@@ -8,7 +8,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	router.Use(CORSMiddleware())
+	r.Use(CORSMiddleware())
 	// r.GET("/ping", handler.TestApi())
 	r.POST("/addskills", handler.AddSkills())
 	r.GET("/getskills", handler.GETAllSkills())
