@@ -14,3 +14,9 @@ func (s *Skills) Add() error {
 
 	return err
 }
+
+func GetAllSkills() ([]Skills, error) {
+	var skills []Skills
+	err := db.DB.Model(&skills).Select()
+	return skills, err
+}

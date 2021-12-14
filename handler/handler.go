@@ -39,3 +39,18 @@ func AddSkills() gin.HandlerFunc {
 		}
 	}
 }
+
+func GETAllSkills() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		skillsData, err := models.GetAllSkills()
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"results": "not found",
+			})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{
+				"results": skillsData,
+			})
+		}
+	}
+}
