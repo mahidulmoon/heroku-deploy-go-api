@@ -2,9 +2,8 @@ package portfolio
 
 import (
 	"fmt"
-	"testing"
-
 	"portfolio/db"
+	"testing"
 
 	"github.com/go-pg/pg/orm"
 )
@@ -13,6 +12,7 @@ func TestSetUpSchema(t *testing.T) {
 	models := []interface{}{
 		// (*models.Skills)(nil),
 		// (*models.Services)(nil),
+		// (*models.Experience)(nil),
 	}
 	for _, model := range models {
 		err := db.DB.Model(model).CreateTable(&orm.CreateTableOptions{})
