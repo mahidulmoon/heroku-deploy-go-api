@@ -15,6 +15,7 @@ func main() {
 	r.POST("/addservice", handler.AddServices())
 	r.GET("/getservices", handler.GETAllService())
 	r.GET("/getexperience", handler.GetAllExperience())
+	r.POST("/addexperience", handler.ExperienceAdd())
 	r.Run()
 }
 

@@ -108,3 +108,28 @@ func GetAllExperience() gin.HandlerFunc {
 		}
 	}
 }
+
+func ExperienceAdd() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var exp models.Experience
+
+		err := c.ShouldBindJSON(&exp)
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"error to bind": err,
+			})
+		} else {
+			err := exp.Add()
+			if err != nil {
+				c.JSON(500, gin.H{
+					"error to bind": err,
+				})
+			} else {
+				c.JSON(201, gin.H{
+					"success": "service added successfully",
+				})
+			}
+		}
+	}
+}
