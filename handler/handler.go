@@ -93,3 +93,18 @@ func GETAllService() gin.HandlerFunc {
 		}
 	}
 }
+
+func GetAllExperience() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		experience, err := models.GetAllExperience()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"results": "not found",
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"results": experience,
+			})
+		}
+	}
+}
