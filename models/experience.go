@@ -10,6 +10,7 @@ type Experience struct {
 	Company    string   `pg:"company" binding:"required" json:"company"`
 	StartDate  string   `pg:"start_date" binding:"required" json:"start_date"`
 	EndDate    string   `pg:"end_date" binding:"required" json:"end_date"`
+	Order      string   `pg:"order" json:"order"`
 }
 
 func (e *Experience) Add() error {

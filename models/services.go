@@ -8,6 +8,7 @@ type Services struct {
 	Name       string   `pg:"name" binding:"required" json:"name"`
 	Technology string   `pg:"technology" binding:"required" json:"technology"`
 	Github     string   `pg:"github" binding:"required" json:"github"`
+	Order      string   `pg:"order" json:"order"`
 }
 
 func (s *Services) Add() error {

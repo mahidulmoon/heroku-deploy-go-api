@@ -7,6 +7,7 @@ type Skills struct {
 	Id        int64    `pg:"id,pk" json:"id,omitempty"`
 	Name      string   `pg:"name" binding:"required" json:"name"`
 	Progress  string   `pg:"progress" binding:"required" json:"progress"`
+	Order     string   `pg:"order" json:"order"`
 }
 
 func (s *Skills) Add() error {
