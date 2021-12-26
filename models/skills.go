@@ -18,6 +18,6 @@ func (s *Skills) Add() error {
 
 func GetAllSkills() ([]Skills, error) {
 	var skills []Skills
-	err := db.DB.Model(&skills).Select()
+	err := db.DB.Model(&skills).Order("order ASC").Select()
 	return skills, err
 }

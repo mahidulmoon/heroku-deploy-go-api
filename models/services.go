@@ -18,6 +18,6 @@ func (s *Services) Add() error {
 
 func GetServices() ([]Services, error) {
 	var services []Services
-	err := db.DB.Model(&services).Select()
+	err := db.DB.Model(&services).Order("order ASC").Select()
 	return services, err
 }

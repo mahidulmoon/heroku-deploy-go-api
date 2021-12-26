@@ -133,3 +133,19 @@ func ExperienceAdd() gin.HandlerFunc {
 		}
 	}
 }
+
+func GetAllMessage() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		msg, err := models.GetAllMessage()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"results": "not found",
+				"error":   err,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"results": msg,
+			})
+		}
+	}
+}

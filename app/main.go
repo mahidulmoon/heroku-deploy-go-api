@@ -24,6 +24,7 @@ func main() {
 	r.GET("/getservices", handler.GETAllService())
 	r.GET("/getexperience", handler.GetAllExperience())
 	r.POST("/addexperience", handler.ExperienceAdd())
+	// r.GET("/getmsg", handler.GetAllMessage())
 	r.Run()
 
 	// r := engine()
