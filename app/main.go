@@ -17,6 +17,7 @@ const (
 func main() {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
+	r.POST("/login", handler.UserLogin())
 	// r.GET("/ping", handler.TestApi())
 	r.POST("/addskills", handler.AddSkills())
 	r.GET("/getskills", handler.GETAllSkills())
