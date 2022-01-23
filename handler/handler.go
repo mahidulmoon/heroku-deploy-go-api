@@ -2,6 +2,7 @@ package handler
 
 import (
 	"portfolio/models"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,6 +50,22 @@ func GETAllSkills() gin.HandlerFunc {
 		} else {
 			c.JSON(200, gin.H{
 				"results": skillsData,
+			})
+		}
+	}
+}
+
+func SkillDelete() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ID, _ := strconv.Atoi(c.Param("id"))
+		err := models.DeleteSkill(ID)
+		if err != nil {
+			c.JSON(400, gin.H{
+				"message": err,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"message": "Skill deleted successfully.",
 			})
 		}
 	}
