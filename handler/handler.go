@@ -95,24 +95,32 @@ func SkillDelete() gin.HandlerFunc {
 
 func AddServices() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var service models.Services
-
-		err := c.ShouldBindJSON(&service)
-
-		if err != nil {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
 			c.JSON(400, gin.H{
-				"error to bind": err,
+				"message": "JWT token is not valid",
 			})
 		} else {
-			err := service.Add()
+			var service models.Services
+
+			err := c.ShouldBindJSON(&service)
+
 			if err != nil {
-				c.JSON(500, gin.H{
+				c.JSON(400, gin.H{
 					"error to bind": err,
 				})
 			} else {
-				c.JSON(201, gin.H{
-					"success": "service added successfully",
-				})
+				err := service.Add()
+				if err != nil {
+					c.JSON(500, gin.H{
+						"error to bind": err,
+					})
+				} else {
+					c.JSON(201, gin.H{
+						"success": "service added successfully",
+					})
+				}
 			}
 		}
 	}
@@ -150,24 +158,32 @@ func GetAllExperience() gin.HandlerFunc {
 
 func ExperienceAdd() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var exp models.Experience
-
-		err := c.ShouldBindJSON(&exp)
-
-		if err != nil {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
 			c.JSON(400, gin.H{
-				"error to bind": err,
+				"message": "JWT token is not valid",
 			})
 		} else {
-			err := exp.Add()
+			var exp models.Experience
+
+			err := c.ShouldBindJSON(&exp)
+
 			if err != nil {
-				c.JSON(500, gin.H{
+				c.JSON(400, gin.H{
 					"error to bind": err,
 				})
 			} else {
-				c.JSON(201, gin.H{
-					"success": "service added successfully",
-				})
+				err := exp.Add()
+				if err != nil {
+					c.JSON(500, gin.H{
+						"error to bind": err,
+					})
+				} else {
+					c.JSON(201, gin.H{
+						"success": "service added successfully",
+					})
+				}
 			}
 		}
 	}
