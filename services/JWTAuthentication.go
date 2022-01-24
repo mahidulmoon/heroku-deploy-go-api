@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -27,12 +26,13 @@ type jwtServices struct {
 func JWTAuthService() JWTService {
 	return &jwtServices{
 		secretKey: getSecretKey(),
-		issure:    "Bikash",
+		issure:    "mahidul",
 	}
 }
 
 func getSecretKey() string {
-	secret := os.Getenv("SECRET")
+	// secret := os.Getenv("SECRET")
+	secret := "gin-insecure-f^35-g!q2%px-)_euq1_t*rc@_=(!1xwwp-j6)o6do-@-3x23z"
 	if secret == "" {
 		secret = "secret"
 	}

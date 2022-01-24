@@ -2,6 +2,7 @@ package handler
 
 import (
 	"portfolio/models"
+	"portfolio/services"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -15,26 +16,47 @@ func TestApi() gin.HandlerFunc {
 	}
 }
 
+func JWTValidation(tokenString string) bool {
+	token, err := services.JWTAuthService().ValidateToken(tokenString)
+	if err != nil {
+		return false
+	} else {
+		if token.Valid {
+			return true
+		} else {
+			return false
+		}
+	}
+}
+
 func AddSkills() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var skill models.Skills
-
-		err := c.ShouldBindJSON(&skill)
-
-		if err != nil {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
 			c.JSON(400, gin.H{
-				"error to bind": err,
+				"message": "JWT token is not valid",
 			})
 		} else {
-			err := skill.Add()
+			var skill models.Skills
+
+			err := c.ShouldBindJSON(&skill)
+
 			if err != nil {
-				c.JSON(500, gin.H{
+				c.JSON(400, gin.H{
 					"error to bind": err,
 				})
 			} else {
-				c.JSON(201, gin.H{
-					"success": "skills added successfully",
-				})
+				err := skill.Add()
+				if err != nil {
+					c.JSON(500, gin.H{
+						"error to bind": err,
+					})
+				} else {
+					c.JSON(201, gin.H{
+						"success": "skills added successfully",
+					})
+				}
 			}
 		}
 	}
