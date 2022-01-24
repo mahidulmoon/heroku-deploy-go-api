@@ -21,3 +21,12 @@ func (u *Users) Authenticate(email string, password string) bool {
 		return true
 	}
 }
+func (u *Users) JWTInfo(email string, password string) (Users, bool) {
+	var user Users
+	err := db.DB.Model(&user).Where("email = ?", email).Where("password = ?", password).Select()
+	if err != nil {
+		return user, false
+	} else {
+		return user, true
+	}
+}
