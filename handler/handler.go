@@ -204,3 +204,28 @@ func GetAllMessage() gin.HandlerFunc {
 		}
 	}
 }
+
+func AddMessage() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var modelData models.MessageMe
+
+		err := c.ShouldBindJSON(&modelData)
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"message": "can not bind data into json format.",
+			})
+		} else {
+			err := modelData.AddMsg()
+			if err != nil {
+				c.JSON(400, gin.H{
+					"message": "can not insert message please try again.",
+				})
+			} else {
+				c.JSON(200, gin.H{
+					"message": "Your message has been stored in Database.",
+				})
+			}
+		}
+	}
+}

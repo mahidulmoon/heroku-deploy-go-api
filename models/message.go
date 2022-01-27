@@ -16,3 +16,8 @@ func GetAllMessage() ([]MessageMe, error) {
 	err := db.DB.Model(&msg).Select()
 	return msg, err
 }
+
+func (m *MessageMe) AddMsg() error {
+	_, err := db.DB.Model(m).Insert()
+	return err
+}
