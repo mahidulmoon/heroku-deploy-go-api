@@ -28,6 +28,7 @@ func main() {
 	r.POST("/addexperience", handler.ExperienceAdd())
 	r.GET("/getmsg", handler.GetAllMessage())
 	r.POST("/addmsg", handler.AddMessage())
+	r.POST("/addexpense", handler.ExpenseAdd())
 	r.Run()
 
 	// r := engine()

@@ -229,3 +229,28 @@ func AddMessage() gin.HandlerFunc {
 		}
 	}
 }
+
+func ExpenseAdd() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var expense models.Expense
+
+		err := c.ShouldBindJSON(&expense)
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"message": "can not bind data into json format.",
+			})
+		} else {
+			err := expense.AddExpense()
+			if err != nil {
+				c.JSON(400, gin.H{
+					"message": "can not insert expense please try again.",
+				})
+			} else {
+				c.JSON(200, gin.H{
+					"message": "Your expense has been stored in Database.",
+				})
+			}
+		}
+	}
+}
