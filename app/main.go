@@ -29,6 +29,7 @@ func main() {
 	r.GET("/getmsg", handler.GetAllMessage())
 	r.POST("/addmsg", handler.AddMessage())
 	r.POST("/addexpense", handler.ExpenseAdd())
+	r.GET("/getexpense", handler.AllExpense())
 	r.Run()
 
 	// r := engine()

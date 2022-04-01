@@ -254,3 +254,19 @@ func ExpenseAdd() gin.HandlerFunc {
 		}
 	}
 }
+
+func AllExpense() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		exp, err := models.GetAllExpense()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"results": "data not found",
+				"error":   err,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"results": exp,
+			})
+		}
+	}
+}

@@ -21,3 +21,10 @@ func (e *Expense) AddExpense() error {
 	_, err := db.DB.Model(e).Insert()
 	return err
 }
+
+func GetAllExpense() ([]Expense, error) {
+	var exp []Expense
+	err := db.DB.Model(&exp).Select()
+
+	return exp, err
+}
