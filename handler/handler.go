@@ -31,34 +31,34 @@ func JWTValidation(tokenString string) bool {
 
 func AddSkills() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
-		result := JWTValidation(token)
-		if result != true {
+		// token := c.GetHeader("Authorization")
+		// result := JWTValidation(token)
+		// if result != true {
+		// 	c.JSON(400, gin.H{
+		// 		"message": "JWT token is not valid",
+		// 	})
+		// } else {
+		var skill models.Skills
+
+		err := c.ShouldBindJSON(&skill)
+
+		if err != nil {
 			c.JSON(400, gin.H{
-				"message": "JWT token is not valid",
+				"error to bind": err,
 			})
 		} else {
-			var skill models.Skills
-
-			err := c.ShouldBindJSON(&skill)
-
+			err := skill.Add()
 			if err != nil {
-				c.JSON(400, gin.H{
+				c.JSON(500, gin.H{
 					"error to bind": err,
 				})
 			} else {
-				err := skill.Add()
-				if err != nil {
-					c.JSON(500, gin.H{
-						"error to bind": err,
-					})
-				} else {
-					c.JSON(201, gin.H{
-						"success": "skills added successfully",
-					})
-				}
+				c.JSON(201, gin.H{
+					"success": "skills added successfully",
+				})
 			}
 		}
+		// }
 	}
 }
 
