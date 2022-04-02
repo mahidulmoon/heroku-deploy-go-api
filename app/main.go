@@ -30,6 +30,7 @@ func main() {
 	r.POST("/addmsg", handler.AddMessage())
 	r.POST("/addexpense", handler.ExpenseAdd())
 	r.GET("/getexpense", handler.AllExpense())
+	r.POST("/expensefilter", handler.ExpenseFilter())
 	r.Run()
 
 	// r := engine()

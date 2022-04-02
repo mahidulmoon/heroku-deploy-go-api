@@ -270,3 +270,43 @@ func AllExpense() gin.HandlerFunc {
 		}
 	}
 }
+
+func ExpenseFilter() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var filter models.FilterExpense
+
+		err := c.ShouldBindJSON(&filter)
+		if err != nil {
+			c.JSON(400, gin.H{
+				"message": "can not bind data into json format.",
+			})
+		} else {
+			data, err := models.GetFilterExpense(filter.Year, filter.Month, filter.Day)
+			if err != nil {
+				c.JSON(400, gin.H{
+					"message": "no data found",
+					"error":   err,
+				})
+			} else {
+				var total float64
+				for value := range data {
+					// fmt.Println("data: ", data[value].Price)
+					amount, err := strconv.ParseFloat(data[value].Price, 64)
+					if err != nil {
+						c.JSON(400, gin.H{
+							"message": "float64 convertion error",
+						})
+					}
+					total = total + amount
+				}
+				c.JSON(200, gin.H{
+					"message":      "data fetch successful",
+					"data":         data,
+					"total_amount": total,
+				})
+			}
+
+		}
+
+	}
+}
