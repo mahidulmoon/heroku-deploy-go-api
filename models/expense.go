@@ -40,14 +40,14 @@ type FilterExpense struct {
 func GetFilterExpense(year string, month string, day string) ([]Expense, error) {
 	var expense []Expense
 	var err error
-	if year != "" && month != "" {
+	if year != "" && month != "" && day == "" {
 		err = db.DB.Model(&expense).Where("year = ?", year).Where("month = ?", month).Select()
 	} else if month == "" {
 		err = db.DB.Model(&expense).Where("year = ?", year).Select()
 	} else if year == "" {
 		err = db.DB.Model(&expense).Where("month = ?", month).Select()
 	} else if year != "" && month != "" && day != "" {
-		err = db.DB.Model(&expense).Where("year = ?", year).Where("month = ?", month).Where("day = ?", day).Select()
+		err = db.DB.Model(&expense).Where("year = ?", year).Where("month = ?", month).Where("monthdate = ?", day).Select()
 	}
 
 	return expense, err
