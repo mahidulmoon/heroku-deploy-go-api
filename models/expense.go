@@ -102,3 +102,9 @@ func AllGeneData() ([]GenerateExpense, error) {
 	return genexp, err
 
 }
+
+func DeleteGenExp(year string, month string) error {
+	var model []Expense
+	_, err := db.DB.Model(&model).Where("year = ?", year).Where("month = ?", month).Delete()
+	return err
+}

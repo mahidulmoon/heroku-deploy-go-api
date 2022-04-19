@@ -368,9 +368,16 @@ func GenerateMonthlyReport() gin.HandlerFunc {
 								"error":   err,
 							})
 						} else {
-							c.JSON(200, gin.H{
-								"message": "data generated successfully",
-							})
+							err := models.DeleteGenExp(postvalues.Year, postvalues.Month)
+							if err != nil {
+								c.JSON(400, gin.H{
+									"message": "data generated successfully but can not deleted from db",
+								})
+							} else {
+								c.JSON(200, gin.H{
+									"message": "data generated successfully",
+								})
+							}
 						}
 					}
 				}
