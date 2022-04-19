@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"portfolio/models"
 	"portfolio/services"
 	"strconv"
@@ -289,24 +290,107 @@ func ExpenseFilter() gin.HandlerFunc {
 				})
 			} else {
 				var total float64
+				var total_in float64
 				for value := range data {
 					// fmt.Println("data: ", data[value].Price)
-					amount, err := strconv.ParseFloat(data[value].Price, 64)
-					if err != nil {
-						c.JSON(400, gin.H{
-							"message": "float64 convertion error",
-						})
+					if data[value].Type == "expense" {
+						amount, err := strconv.ParseFloat(data[value].Price, 64)
+						if err != nil {
+							c.JSON(400, gin.H{
+								"message": "float64 convertion error",
+							})
+						}
+						total = total + amount
+					} else {
+						amount_in, err := strconv.ParseFloat(data[value].Price, 64)
+						if err != nil {
+							c.JSON(400, gin.H{
+								"message": "float64 convertion error",
+							})
+						}
+						total_in = total_in + amount_in
 					}
-					total = total + amount
 				}
 				c.JSON(200, gin.H{
-					"message":      "data fetch successful",
-					"data":         data,
-					"total_amount": total,
+					"message":         "data fetch successful",
+					"data":            data,
+					"total_amount":    total,
+					"total_amount_in": total_in,
 				})
 			}
 
 		}
 
+	}
+}
+
+func GenerateMonthlyReport() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var postvalues models.GenerateExpense
+		err := c.ShouldBindJSON(&postvalues)
+		if err != nil {
+			c.JSON(400, gin.H{
+				"message": "can not bind data into json format.",
+			})
+		} else {
+			msg, _ := postvalues.GetGenerateInfo()
+			if msg == "no data found" || msg == "already data found" {
+				c.JSON(400, gin.H{
+					"message": msg,
+				})
+			} else {
+				data, err := models.GetFilterExpense(postvalues.Year, postvalues.Month, postvalues.Monthdate)
+				if err != nil {
+					c.JSON(400, gin.H{
+						"message": "no data found",
+						"error":   err,
+					})
+				} else {
+					var total float64
+					for value := range data {
+						amount, err := strconv.ParseFloat(data[value].Price, 64)
+						if err != nil {
+							c.JSON(400, gin.H{
+								"message": "float64 convertion error",
+							})
+						}
+						total = total + amount
+					}
+					if total == 0 {
+						c.JSON(400, gin.H{
+							"message": "No Data Found",
+						})
+					} else {
+						err := postvalues.AddGenExp(fmt.Sprintf("%v", total))
+						if err != nil {
+							c.JSON(400, gin.H{
+								"message": "data generated unsuccessfull",
+								"error":   err,
+							})
+						} else {
+							c.JSON(200, gin.H{
+								"message": "data generated successfully",
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func GetAllGenExp() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		genexp, err := models.AllGeneData()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"results": "data not found",
+				"error":   err,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"results": genexp,
+			})
+		}
 	}
 }

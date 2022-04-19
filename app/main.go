@@ -31,6 +31,8 @@ func main() {
 	r.POST("/addexpense", handler.ExpenseAdd())
 	r.GET("/getexpense", handler.AllExpense())
 	r.POST("/expensefilter", handler.ExpenseFilter())
+	r.POST("/generateexpense", handler.GenerateMonthlyReport())
+	r.GET("/getallgenexp", handler.GetAllGenExp())
 	r.Run()
 
 	// r := engine()
