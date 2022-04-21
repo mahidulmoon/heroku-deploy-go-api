@@ -347,21 +347,33 @@ func GenerateMonthlyReport() gin.HandlerFunc {
 					})
 				} else {
 					var total float64
+					var total_income float64
+
 					for value := range data {
-						amount, err := strconv.ParseFloat(data[value].Price, 64)
-						if err != nil {
-							c.JSON(400, gin.H{
-								"message": "float64 convertion error",
-							})
+						if data[value].Type == "expense" {
+							amount, err := strconv.ParseFloat(data[value].Price, 64)
+							if err != nil {
+								c.JSON(400, gin.H{
+									"message": "float64 convertion error",
+								})
+							}
+							total = total + amount
+						} else {
+							amount, err := strconv.ParseFloat(data[value].Price, 64)
+							if err != nil {
+								c.JSON(400, gin.H{
+									"message": "float64 convertion error",
+								})
+							}
+							total_income = total_income + amount
 						}
-						total = total + amount
 					}
 					if total == 0 {
 						c.JSON(400, gin.H{
 							"message": "No Data Found",
 						})
 					} else {
-						err := postvalues.AddGenExp(fmt.Sprintf("%v", total))
+						err := postvalues.AddGenExp(fmt.Sprintf("%v", total), fmt.Sprintf("%v", total_income))
 						if err != nil {
 							c.JSON(400, gin.H{
 								"message": "data generated unsuccessfull",

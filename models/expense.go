@@ -61,6 +61,7 @@ type GenerateExpense struct {
 	Month     string   `pg:"month" binding: "required" json:"month"`
 	Monthdate string   `pg:"month_date" binding: "required" json:"monthdate"`
 	Price     string   `pg:"price" binding: "required" json:"price"`
+	Income    string   `pg:"income" binding: "required" json:"income"`
 	Time      string   `pg:"time" binding: "required" json:"time"`
 	Type      string   `pg:"type" binding: "required" json:"type"`
 	UserDate  string   `pg:"userDate" binding: "required" json:"userDate"`
@@ -89,8 +90,9 @@ func (g *GenerateExpense) GetGenerateInfo() (string, error) {
 		}
 	}
 }
-func (g *GenerateExpense) AddGenExp(amount string) error {
+func (g *GenerateExpense) AddGenExp(amount string, income string) error {
 	g.Price = amount
+	g.Income = income
 	g.Type = "backup"
 	_, err := db.DB.Model(g).Insert()
 	return err
