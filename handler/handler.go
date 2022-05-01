@@ -6,6 +6,7 @@ import (
 	"portfolio/services"
 	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,36 +31,50 @@ func JWTValidation(tokenString string) bool {
 	}
 }
 
+func JWTDecode(tokenString string) int64 {
+	token, _ := jwt.Parse(tokenString, nil)
+	if token == nil {
+		// return nil, err
+		fmt.Println("Invalid token", nil)
+	}
+	claims, _ := token.Claims.(jwt.MapClaims)
+	// fmt.Println("name: ", claims["user_id"])
+	// claims are actually a map[string]interface{}
+	userId, _ := strconv.ParseInt(fmt.Sprintf("%v", claims["user_id"]), 0, 64)
+	return userId
+}
+
 func AddSkills() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// token := c.GetHeader("Authorization")
-		// result := JWTValidation(token)
-		// if result != true {
-		// 	c.JSON(400, gin.H{
-		// 		"message": "JWT token is not valid",
-		// 	})
-		// } else {
-		var skill models.Skills
-
-		err := c.ShouldBindJSON(&skill)
-
-		if err != nil {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
 			c.JSON(400, gin.H{
-				"error to bind": err,
+				"message": "JWT token is not valid",
 			})
 		} else {
-			err := skill.Add()
+			var skill models.Skills
+			user_id := JWTDecode(token)
+
+			err := c.ShouldBindJSON(&skill)
+
 			if err != nil {
-				c.JSON(500, gin.H{
+				c.JSON(400, gin.H{
 					"error to bind": err,
 				})
 			} else {
-				c.JSON(201, gin.H{
-					"success": "skills added successfully",
-				})
+				err := skill.Add(user_id)
+				if err != nil {
+					c.JSON(500, gin.H{
+						"error to bind": err,
+					})
+				} else {
+					c.JSON(201, gin.H{
+						"success": "skills added successfully",
+					})
+				}
 			}
 		}
-		// }
 	}
 }
 

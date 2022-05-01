@@ -8,9 +8,11 @@ type Skills struct {
 	Name      string   `pg:"name" binding:"required" json:"name"`
 	Progress  string   `pg:"progress" binding:"required" json:"progress"`
 	Order     string   `pg:"order" json:"order"`
+	UserId    int64    `pg:"user_id" json:"user_id"`
 }
 
-func (s *Skills) Add() error {
+func (s *Skills) Add(userid int64) error {
+	s.UserId = userid
 	_, err := db.DB.Model(s).Insert()
 
 	return err
