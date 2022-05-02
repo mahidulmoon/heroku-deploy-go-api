@@ -221,6 +221,29 @@ func GetAllExperience() gin.HandlerFunc {
 		}
 	}
 }
+func GetAllExperienceByUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
+			c.JSON(400, gin.H{
+				"message": "JWT token is not valid",
+			})
+		} else {
+			user_id := JWTDecode(token)
+			experience, err := models.GetAllExperienceByUser(user_id)
+			if err != nil {
+				c.JSON(500, gin.H{
+					"results": "not found",
+				})
+			} else {
+				c.JSON(200, gin.H{
+					"results": experience,
+				})
+			}
+		}
+	}
+}
 
 func ExperienceAdd() gin.HandlerFunc {
 	return func(c *gin.Context) {

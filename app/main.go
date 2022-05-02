@@ -27,6 +27,7 @@ func main() {
 	r.GET("/getservices", handler.GETAllService())
 	r.GET("/getservicesbyuser", handler.GETAllServiceByUser())
 	r.GET("/getexperience", handler.GetAllExperience())
+	r.GET("/getexperiencebyuser", handler.GetAllExperienceByUser())
 	r.POST("/addexperience", handler.ExperienceAdd())
 	r.GET("/getmsg", handler.GetAllMessage())
 	r.POST("/addmsg", handler.AddMessage())

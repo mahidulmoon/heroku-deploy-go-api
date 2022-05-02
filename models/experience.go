@@ -25,3 +25,9 @@ func GetAllExperience() ([]Experience, error) {
 	err := db.DB.Model(&exp).Order("order ASC").Select()
 	return exp, err
 }
+
+func GetAllExperienceByUser(user int64) ([]Experience, error) {
+	var exp []Experience
+	err := db.DB.Model(&exp).Order("order ASC").Where("user_id = ?", user).Select()
+	return exp, err
+}
