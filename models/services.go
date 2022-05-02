@@ -25,3 +25,9 @@ func GetServices() ([]Services, error) {
 	err := db.DB.Model(&services).Order("order ASC").Select()
 	return services, err
 }
+
+func GetServiceByUser(user_id int64) ([]Services, error) {
+	var services []Services
+	err := db.DB.Model(&services).Order("order ASC").Where("user_id = ?", user_id).Select()
+	return services, err
+}
