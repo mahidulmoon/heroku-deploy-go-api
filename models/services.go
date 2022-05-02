@@ -1,6 +1,8 @@
 package models
 
-import "portfolio/db"
+import (
+	"portfolio/db"
+)
 
 type Services struct {
 	tablename  struct{} `pg:"services"`
@@ -9,9 +11,11 @@ type Services struct {
 	Technology string   `pg:"technology" binding:"required" json:"technology"`
 	Github     string   `pg:"github" binding:"required" json:"github"`
 	Order      string   `pg:"order" json:"order"`
+	UserId     int64    `pg:"user_id"`
 }
 
-func (s *Services) Add() error {
+func (s *Services) Add(user_id int64) error {
+	s.UserId = user_id
 	_, err := db.DB.Model(s).Insert()
 	return err
 }
