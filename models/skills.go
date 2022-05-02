@@ -23,6 +23,11 @@ func GetAllSkills() ([]Skills, error) {
 	err := db.DB.Model(&skills).Order("order ASC").Select()
 	return skills, err
 }
+func GetAllSkillsByUser(user_id int64) ([]Skills, error) {
+	var skills []Skills
+	err := db.DB.Model(&skills).Order("order ASC").Where("user_id = ?", user_id).Select()
+	return skills, err
+}
 
 func DeleteSkill(id int) error {
 	var model Skills

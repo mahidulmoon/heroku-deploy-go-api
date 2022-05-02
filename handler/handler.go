@@ -39,7 +39,6 @@ func JWTDecode(tokenString string) int64 {
 	}
 	claims, _ := token.Claims.(jwt.MapClaims)
 	// fmt.Println("name: ", claims["user_id"])
-	// claims are actually a map[string]interface{}
 	userId, _ := strconv.ParseInt(fmt.Sprintf("%v", claims["user_id"]), 0, 64)
 	return userId
 }
@@ -89,6 +88,29 @@ func GETAllSkills() gin.HandlerFunc {
 			c.JSON(200, gin.H{
 				"results": skillsData,
 			})
+		}
+	}
+}
+func GETAllSkillsByUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
+			c.JSON(400, gin.H{
+				"message": "JWT token is not valid",
+			})
+		} else {
+			user_id := JWTDecode(token)
+			skillsData, err := models.GetAllSkillsByUser(user_id)
+			if err != nil {
+				c.JSON(500, gin.H{
+					"results": "not found",
+				})
+			} else {
+				c.JSON(200, gin.H{
+					"results": skillsData,
+				})
+			}
 		}
 	}
 }
