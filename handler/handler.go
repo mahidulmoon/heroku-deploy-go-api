@@ -224,34 +224,37 @@ func GetAllExperience() gin.HandlerFunc {
 
 func ExperienceAdd() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// token := c.GetHeader("Authorization")
-		// result := JWTValidation(token)
-		// if result != true {
-		// 	c.JSON(400, gin.H{
-		// 		"message": "JWT token is not valid",
-		// 	})
-		// } else {
-		var exp models.Experience
-
-		err := c.ShouldBindJSON(&exp)
-
-		if err != nil {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
 			c.JSON(400, gin.H{
-				"error to bind": err,
+				"message": "JWT token is not valid",
 			})
 		} else {
-			err := exp.Add()
+			var exp models.Experience
+
+			err := c.ShouldBindJSON(&exp)
+
 			if err != nil {
-				c.JSON(500, gin.H{
+				c.JSON(400, gin.H{
 					"error to bind": err,
+					"message":       "error to bind",
 				})
 			} else {
-				c.JSON(201, gin.H{
-					"success": "service added successfully",
-				})
+				user_id := JWTDecode(token)
+				err := exp.Add(user_id)
+				if err != nil {
+					c.JSON(500, gin.H{
+						"error to bind": err,
+						"message":       "error to bind",
+					})
+				} else {
+					c.JSON(201, gin.H{
+						"success": "service added successfully",
+					})
+				}
 			}
 		}
-		// }
 	}
 }
 

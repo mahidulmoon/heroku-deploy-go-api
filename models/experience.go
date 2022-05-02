@@ -11,9 +11,11 @@ type Experience struct {
 	StartDate  string   `pg:"start_date" binding:"required" json:"start_date"`
 	EndDate    string   `pg:"end_date" binding:"required" json:"end_date"`
 	Order      string   `pg:"order" json:"order"`
+	UserId     int64    `pg:"user_id" json:"user_id"`
 }
 
-func (e *Experience) Add() error {
+func (e *Experience) Add(user_id int64) error {
+	e.UserId = user_id
 	_, err := db.DB.Model(e).Insert()
 	return err
 }

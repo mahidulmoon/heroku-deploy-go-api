@@ -11,7 +11,7 @@ type Services struct {
 	Technology string   `pg:"technology" binding:"required" json:"technology"`
 	Github     string   `pg:"github" binding:"required" json:"github"`
 	Order      string   `pg:"order" json:"order"`
-	UserId     int64    `pg:"user_id"`
+	UserId     int64    `pg:"user_id" json: "user_id"`
 }
 
 func (s *Services) Add(user_id int64) error {
