@@ -524,7 +524,8 @@ func GetAllGenExp() gin.HandlerFunc {
 				"message": "JWT token is not valid",
 			})
 		} else {
-			genexp, err := models.AllGeneData()
+			user_id := JWTDecode(token)
+			genexp, err := models.AllGeneData(user_id)
 			if err != nil {
 				c.JSON(500, gin.H{
 					"results": "data not found",
