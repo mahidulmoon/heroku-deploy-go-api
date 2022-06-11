@@ -102,9 +102,9 @@ func (g *GenerateExpense) AddGenExp(amount string, income string, user_id int64)
 	return err
 }
 
-func AllGeneData() ([]GenerateExpense, error) {
+func AllGeneData(user_id int64) ([]GenerateExpense, error) {
 	var genexp []GenerateExpense
-	err := db.DB.Model(&genexp).Select()
+	err := db.DB.Model(&genexp).Where("user_id = ?", user_id).Select()
 	return genexp, err
 
 }

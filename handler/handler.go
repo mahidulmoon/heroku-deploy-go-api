@@ -517,16 +517,24 @@ func GenerateMonthlyReport() gin.HandlerFunc {
 
 func GetAllGenExp() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		genexp, err := models.AllGeneData()
-		if err != nil {
-			c.JSON(500, gin.H{
-				"results": "data not found",
-				"error":   err,
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
+			c.JSON(400, gin.H{
+				"message": "JWT token is not valid",
 			})
 		} else {
-			c.JSON(200, gin.H{
-				"results": genexp,
-			})
+			genexp, err := models.AllGeneData()
+			if err != nil {
+				c.JSON(500, gin.H{
+					"results": "data not found",
+					"error":   err,
+				})
+			} else {
+				c.JSON(200, gin.H{
+					"results": genexp,
+				})
+			}
 		}
 	}
 }
