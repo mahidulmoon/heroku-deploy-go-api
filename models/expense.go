@@ -39,17 +39,17 @@ type FilterExpense struct {
 	Day   string `json: "day"`
 }
 
-func GetFilterExpense(year string, month string, day string) ([]Expense, error) {
+func GetFilterExpense(year string, month string, day string, user_id int64) ([]Expense, error) {
 	var expense []Expense
 	var err error
 	if year != "" && month != "" && day == "" {
-		err = db.DB.Model(&expense).Where("year = ?", year).Where("month = ?", month).Select()
+		err = db.DB.Model(&expense).Where("year = ?", year).Where("month = ?", month).Where("user_id = ?", user_id).Select()
 	} else if month == "" {
-		err = db.DB.Model(&expense).Where("year = ?", year).Select()
+		err = db.DB.Model(&expense).Where("year = ?", year).Where("user_id = ?", user_id).Select()
 	} else if year == "" {
-		err = db.DB.Model(&expense).Where("month = ?", month).Select()
+		err = db.DB.Model(&expense).Where("month = ?", month).Where("user_id = ?", user_id).Select()
 	} else if year != "" && month != "" && day != "" {
-		err = db.DB.Model(&expense).Where("year = ?", year).Where("month = ?", month).Where("monthdate = ?", day).Select()
+		err = db.DB.Model(&expense).Where("year = ?", year).Where("month = ?", month).Where("monthdate = ?", day).Where("user_id = ?", user_id).Select()
 	}
 
 	return expense, err

@@ -374,72 +374,22 @@ func AllExpense() gin.HandlerFunc {
 
 func ExpenseFilter() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var filter models.FilterExpense
-
-		err := c.ShouldBindJSON(&filter)
-		if err != nil {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
 			c.JSON(400, gin.H{
-				"message": "can not bind data into json format.",
+				"message": "JWT token is not valid",
 			})
 		} else {
-			data, err := models.GetFilterExpense(filter.Year, filter.Month, filter.Day)
+			var filter models.FilterExpense
+			user_id := JWTDecode(token)
+			err := c.ShouldBindJSON(&filter)
 			if err != nil {
 				c.JSON(400, gin.H{
-					"message": "no data found",
-					"error":   err,
+					"message": "can not bind data into json format.",
 				})
 			} else {
-				var total float64
-				var total_in float64
-				for value := range data {
-					// fmt.Println("data: ", data[value].Price)
-					if data[value].Type == "expense" {
-						amount, err := strconv.ParseFloat(data[value].Price, 64)
-						if err != nil {
-							c.JSON(400, gin.H{
-								"message": "float64 convertion error",
-							})
-						}
-						total = total + amount
-					} else {
-						amount_in, err := strconv.ParseFloat(data[value].Price, 64)
-						if err != nil {
-							c.JSON(400, gin.H{
-								"message": "float64 convertion error",
-							})
-						}
-						total_in = total_in + amount_in
-					}
-				}
-				c.JSON(200, gin.H{
-					"message":         "data fetch successful",
-					"data":            data,
-					"total_amount":    total,
-					"total_amount_in": total_in,
-				})
-			}
-
-		}
-
-	}
-}
-
-func GenerateMonthlyReport() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var postvalues models.GenerateExpense
-		err := c.ShouldBindJSON(&postvalues)
-		if err != nil {
-			c.JSON(400, gin.H{
-				"message": "can not bind data into json format.",
-			})
-		} else {
-			msg, _ := postvalues.GetGenerateInfo()
-			if msg == "no data found" || msg == "already data found" {
-				c.JSON(400, gin.H{
-					"message": msg,
-				})
-			} else {
-				data, err := models.GetFilterExpense(postvalues.Year, postvalues.Month, postvalues.Monthdate)
+				data, err := models.GetFilterExpense(filter.Year, filter.Month, filter.Day, user_id)
 				if err != nil {
 					c.JSON(400, gin.H{
 						"message": "no data found",
@@ -447,9 +397,9 @@ func GenerateMonthlyReport() gin.HandlerFunc {
 					})
 				} else {
 					var total float64
-					var total_income float64
-
+					var total_in float64
 					for value := range data {
+						// fmt.Println("data: ", data[value].Price)
 						if data[value].Type == "expense" {
 							amount, err := strconv.ParseFloat(data[value].Price, 64)
 							if err != nil {
@@ -459,36 +409,103 @@ func GenerateMonthlyReport() gin.HandlerFunc {
 							}
 							total = total + amount
 						} else {
-							amount, err := strconv.ParseFloat(data[value].Price, 64)
+							amount_in, err := strconv.ParseFloat(data[value].Price, 64)
 							if err != nil {
 								c.JSON(400, gin.H{
 									"message": "float64 convertion error",
 								})
 							}
-							total_income = total_income + amount
+							total_in = total_in + amount_in
 						}
 					}
-					if total == 0 {
+					c.JSON(200, gin.H{
+						"message":         "data fetch successful",
+						"data":            data,
+						"total_amount":    total,
+						"total_amount_in": total_in,
+					})
+				}
+
+			}
+		}
+
+	}
+}
+
+func GenerateMonthlyReport() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
+			c.JSON(400, gin.H{
+				"message": "JWT token is not valid",
+			})
+		} else {
+			var postvalues models.GenerateExpense
+			user_id := JWTDecode(token)
+			err := c.ShouldBindJSON(&postvalues)
+			if err != nil {
+				c.JSON(400, gin.H{
+					"message": "can not bind data into json format.",
+				})
+			} else {
+				msg, _ := postvalues.GetGenerateInfo()
+				if msg == "no data found" || msg == "already data found" {
+					c.JSON(400, gin.H{
+						"message": msg,
+					})
+				} else {
+					data, err := models.GetFilterExpense(postvalues.Year, postvalues.Month, postvalues.Monthdate, user_id)
+					if err != nil {
 						c.JSON(400, gin.H{
-							"message": "No Data Found",
+							"message": "no data found",
+							"error":   err,
 						})
 					} else {
-						err := postvalues.AddGenExp(fmt.Sprintf("%v", total), fmt.Sprintf("%v", total_income))
-						if err != nil {
+						var total float64
+						var total_income float64
+
+						for value := range data {
+							if data[value].Type == "expense" {
+								amount, err := strconv.ParseFloat(data[value].Price, 64)
+								if err != nil {
+									c.JSON(400, gin.H{
+										"message": "float64 convertion error",
+									})
+								}
+								total = total + amount
+							} else {
+								amount, err := strconv.ParseFloat(data[value].Price, 64)
+								if err != nil {
+									c.JSON(400, gin.H{
+										"message": "float64 convertion error",
+									})
+								}
+								total_income = total_income + amount
+							}
+						}
+						if total == 0 {
 							c.JSON(400, gin.H{
-								"message": "data generated unsuccessfull",
-								"error":   err,
+								"message": "No Data Found",
 							})
 						} else {
-							err := models.DeleteGenExp(postvalues.Year, postvalues.Month)
+							err := postvalues.AddGenExp(fmt.Sprintf("%v", total), fmt.Sprintf("%v", total_income))
 							if err != nil {
 								c.JSON(400, gin.H{
-									"message": "data generated successfully but can not deleted from db",
+									"message": "data generated unsuccessfull",
+									"error":   err,
 								})
 							} else {
-								c.JSON(200, gin.H{
-									"message": "data generated successfully",
-								})
+								err := models.DeleteGenExp(postvalues.Year, postvalues.Month)
+								if err != nil {
+									c.JSON(400, gin.H{
+										"message": "data generated successfully but can not deleted from db",
+									})
+								} else {
+									c.JSON(200, gin.H{
+										"message": "data generated successfully",
+									})
+								}
 							}
 						}
 					}
