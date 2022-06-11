@@ -69,18 +69,19 @@ type GenerateExpense struct {
 	UserDate  string   `pg:"userDate" binding: "required" json:"userDate"`
 	Weekday   string   `pg:"week_day" binding: "required" json:"weekday"`
 	Year      string   `pg:"year" binding: "required" json:"year"`
+	UserId    int64    `pg:"user_id" json:"user_id"`
 }
 
-func (g *GenerateExpense) GetGenerateInfo() (string, error) {
+func (g *GenerateExpense) GetGenerateInfo(user_id int64) (string, error) {
 	var getexpense []GenerateExpense
-	err := db.DB.Model(&getexpense).Where("year = ?", g.Year).Where("month = ?", g.Month).Select()
+	err := db.DB.Model(&getexpense).Where("year = ?", g.Year).Where("month = ?", g.Month).Where("user_id = ?", user_id).Select()
 	if err != nil {
 		println("Query Error")
 		return "no data found", err
 	} else {
 		if len(getexpense) == 0 {
 			var getdata []Expense
-			err := db.DB.Model(&getdata).Where("year = ?", g.Year).Where("month = ?", g.Month).Select()
+			err := db.DB.Model(&getdata).Where("year = ?", g.Year).Where("month = ?", g.Month).Where("user_id = ?", user_id).Select()
 			if err != nil {
 				println("Query Error")
 				return "no data found", err
@@ -92,10 +93,11 @@ func (g *GenerateExpense) GetGenerateInfo() (string, error) {
 		}
 	}
 }
-func (g *GenerateExpense) AddGenExp(amount string, income string) error {
+func (g *GenerateExpense) AddGenExp(amount string, income string, user_id int64) error {
 	g.Price = amount
 	g.Income = income
 	g.Type = "backup"
+	g.UserId = user_id
 	_, err := db.DB.Model(g).Insert()
 	return err
 }
@@ -107,8 +109,8 @@ func AllGeneData() ([]GenerateExpense, error) {
 
 }
 
-func DeleteGenExp(year string, month string) error {
+func DeleteGenExp(year string, month string, user_id int64) error {
 	var model []Expense
-	_, err := db.DB.Model(&model).Where("year = ?", year).Where("month = ?", month).Delete()
+	_, err := db.DB.Model(&model).Where("year = ?", year).Where("month = ?", month).Where("user_id = ?", user_id).Delete()
 	return err
 }

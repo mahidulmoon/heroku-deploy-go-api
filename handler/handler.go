@@ -449,7 +449,7 @@ func GenerateMonthlyReport() gin.HandlerFunc {
 					"message": "can not bind data into json format.",
 				})
 			} else {
-				msg, _ := postvalues.GetGenerateInfo()
+				msg, _ := postvalues.GetGenerateInfo(user_id)
 				if msg == "no data found" || msg == "already data found" {
 					c.JSON(400, gin.H{
 						"message": msg,
@@ -489,14 +489,14 @@ func GenerateMonthlyReport() gin.HandlerFunc {
 								"message": "No Data Found",
 							})
 						} else {
-							err := postvalues.AddGenExp(fmt.Sprintf("%v", total), fmt.Sprintf("%v", total_income))
+							err := postvalues.AddGenExp(fmt.Sprintf("%v", total), fmt.Sprintf("%v", total_income), user_id)
 							if err != nil {
 								c.JSON(400, gin.H{
 									"message": "data generated unsuccessfull",
 									"error":   err,
 								})
 							} else {
-								err := models.DeleteGenExp(postvalues.Year, postvalues.Month)
+								err := models.DeleteGenExp(postvalues.Year, postvalues.Month, user_id)
 								if err != nil {
 									c.JSON(400, gin.H{
 										"message": "data generated successfully but can not deleted from db",
