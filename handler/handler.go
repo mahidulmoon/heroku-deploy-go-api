@@ -324,24 +324,33 @@ func AddMessage() gin.HandlerFunc {
 
 func ExpenseAdd() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var expense models.Expense
-
-		err := c.ShouldBindJSON(&expense)
-
-		if err != nil {
+		token := c.GetHeader("Authorization")
+		result := JWTValidation(token)
+		if result != true {
 			c.JSON(400, gin.H{
-				"message": "can not bind data into json format.",
+				"message": "JWT token is not valid",
 			})
 		} else {
-			err := expense.AddExpense()
+			var expense models.Expense
+			user_id := JWTDecode(token)
+
+			err := c.ShouldBindJSON(&expense)
+
 			if err != nil {
 				c.JSON(400, gin.H{
-					"message": "can not insert expense please try again.",
+					"message": "can not bind data into json format.",
 				})
 			} else {
-				c.JSON(200, gin.H{
-					"message": "Your expense has been stored in Database.",
-				})
+				err := expense.AddExpense(user_id)
+				if err != nil {
+					c.JSON(400, gin.H{
+						"message": "can not insert expense please try again.",
+					})
+				} else {
+					c.JSON(200, gin.H{
+						"message": "Your expense has been stored in Database.",
+					})
+				}
 			}
 		}
 	}

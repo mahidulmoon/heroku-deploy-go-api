@@ -17,9 +17,11 @@ type Expense struct {
 	UserDate  string   `pg:"userDate" binding: "required" json:"userDate"`
 	Weekday   string   `pg:"week_day" binding: "required" json:"weekday"`
 	Year      string   `pg:"year" binding: "required" json:"year"`
+	UserId    int64    `pg:"user_id" json:"user_id"`
 }
 
-func (e *Expense) AddExpense() error {
+func (e *Expense) AddExpense(user_id int64) error {
+	e.UserId = user_id
 	_, err := db.DB.Model(e).Insert()
 	return err
 }
